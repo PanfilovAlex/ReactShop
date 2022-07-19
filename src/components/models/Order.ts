@@ -1,6 +1,6 @@
 import { Item } from "./Item";
 
-export type OrderItem = {
+export type Order = {
   item: Item;
   quantity: number;
 };

@@ -2,7 +2,7 @@ import { GoodsItem } from "./GoodsItem";
 import { Item } from "./models/Item";
 
 export const GoodsList = (props: any) => {
-  const { goods } = props;
+  const { goods, addToBasket } = props;
 
   if (!goods.length) {
     return <h3>Nothing found</h3>;
@@ -19,6 +19,7 @@ export const GoodsList = (props: any) => {
             displayName={item.displayName}
             displayAssets={item.displayAssets}
             displayDescription={item.displayDescription}
+            addToBasket={addToBasket}
           />
         );
       })}
