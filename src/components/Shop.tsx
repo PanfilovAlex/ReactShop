@@ -3,13 +3,13 @@ import { API_KEY, API_URL } from "../config";
 import { Preloader } from "./Preloader";
 import { GoodsList } from "./GoodsList";
 import { Cart } from "./Cart";
-import { OrderItem } from "./models/OrderItem";
+import { Order } from "./models/Order";
 import { Item } from "./models/Item";
 
 export const Shop = () => {
   const [goods, setGoods] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [order, setOrder] = useState<OrderItem[]>([]);
+  const [order, setOrder] = useState<Order[]>([]);
 
   useEffect(function getGoods() {
     const requestHeaders = new Headers();
@@ -25,16 +25,26 @@ export const Shop = () => {
       });
   }, []);
 
-  const addToBasket = (itemFromGoods : Item) => {
-    const newOrderItem = {
-        item = itemFromGoods;
-    }
-  }
+  const addToBasket = (itemFromShop: any) => {
+    const itemIndex = order.findIndex(
+      (orderItem) => orderItem.item.mainId === itemFromShop.mainId
+    );
+    if (itemIndex < 0) {
+      const newOrder: Order = {
+        item: itemFromShop,
+        quantity: 1,
+      };
+      const copy = Object.assign([], order);
+      copy.push(newOrder);
 
+      setOrder(copy);
+    }
+  };
+ 
   return (
     <main className="container content">
-      <Cart />
-      {loading ? <Preloader /> : <GoodsList goods={goods} addItem />}
+      <Cart quantity={order.length} />
+      {loading ? <Preloader /> : <GoodsList goods={goods} />}
     </main>
   );
 };

@@ -1,8 +1,14 @@
 import { Item } from "./models/Item";
 
-export const GoodsItem = (props: Item) => {
-  const { mainId, displayName, displayDescription, price, displayAssets } =
-    props;
+export const GoodsItem = (props: any) => {
+  const {
+    mainId,
+    displayName,
+    displayDescription,
+    price,
+    displayAssets,
+    addToBasket,
+  } = props;
 
   return (
     <div className="card" id={mainId}>
@@ -14,7 +20,9 @@ export const GoodsItem = (props: Item) => {
         <p>{displayDescription}</p>
       </div>
       <div className="card-action">
-        <button className="btn">Купить</button>
+        <button className="btn" onClick={() => addToBasket(props)}>
+          Купить
+        </button>
         <span className="right" style={{ fontSize: "1.8rem" }}>
           {price.finalPrice} rub.
         </span>
