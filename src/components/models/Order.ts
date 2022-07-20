@@ -1,6 +1,5 @@
 import { Item } from "./Item";
 
 export type Order = {
-  item: Item;
-  quantity: number;
+  itemIdToQuantity: Map<string, number>;
 };

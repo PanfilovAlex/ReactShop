@@ -5,11 +5,19 @@ import { GoodsList } from "./GoodsList";
 import { Cart } from "./Cart";
 import { Order } from "./models/Order";
 import { Item } from "./models/Item";
+import { CartList } from "./CartList";
 
-export const Shop = () => {
+export const Shop = (): JSX.Element => {
   const [goods, setGoods] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [order, setOrder] = useState<Order[]>([]);
+  const [order, setOrder] = useState<Order>({
+    itemIdToQuantity: new Map(),
+  });
+  const [isCartShow, setIsCartShow] = useState(false);
+
+  const handleCartShow = () => {
+    setIsCartShow(!isCartShow);
+  };
 
   useEffect(function getGoods() {
     const requestHeaders = new Headers();
@@ -25,26 +33,33 @@ export const Shop = () => {
       });
   }, []);
 
-  const addToBasket = (itemFromShop: any) => {
-    const itemIndex = order.findIndex(
-      (orderItem) => orderItem.item.mainId === itemFromShop.mainId
-    );
-    if (itemIndex < 0) {
+  const addToCart = (itemId: string) => {
+    const itemQuantity = order.itemIdToQuantity.get(itemId);
+    if (itemQuantity === undefined) {
       const newOrder: Order = {
-        item: itemFromShop,
-        quantity: 1,
+        itemIdToQuantity: order.itemIdToQuantity.set(itemId, 1),
       };
-      const copy = Object.assign([], order);
-      copy.push(newOrder);
 
-      setOrder(copy);
+      setOrder(newOrder);
+    } else {
+      const newOrder: Order = {
+        itemIdToQuantity: order.itemIdToQuantity.set(itemId, itemQuantity + 1),
+      };
+
+      setOrder(newOrder);
     }
   };
- 
+
+  console.log(order);
   return (
     <main className="container content">
-      <Cart quantity={order.length} />
-      {loading ? <Preloader /> : <GoodsList goods={goods} />}
+      <Cart order={order} handleCartShow={handleCartShow} />
+      {loading ? (
+        <Preloader />
+      ) : (
+        <GoodsList goods={goods} addToCart={addToCart} />
+      )}
+      <CartList order={order} handleCartShow={handleCartShow} />
     </main>
   );
 };
