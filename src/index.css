@@ -46,7 +46,7 @@ nav {
   }
 }
 
-.basket-list {
+.cart-list {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -62,15 +62,16 @@ nav {
   animation: show 500ms ease-in-out;
 }
 
-.basket-close {
+.cart-close {
   cursor: pointer;
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
   color: #fff;
 }
-.basket-delete {
+.cart-delete {
   cursor: pointer;
+  right: 0.5rem;
 }
 
 @keyframes show {
@@ -84,7 +85,7 @@ nav {
   }
 }
 
-.basket-quantity {
+.cart-quantity {
   cursor: pointer;
   vertical-align: middle;
   color: #26a69a;

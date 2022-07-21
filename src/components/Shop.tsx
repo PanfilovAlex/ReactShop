@@ -50,6 +50,14 @@ export const Shop = (): JSX.Element => {
     }
   };
 
+  const deleteItemFromCart = (itemId: string) => {
+    const newOrder: Order = {
+      itemIdToQuantity: order.itemIdToQuantity,
+    };
+    newOrder.itemIdToQuantity.delete(itemId);
+    setOrder(newOrder);
+  };
+
   console.log(order);
   return (
     <main className="container content">
@@ -59,7 +67,13 @@ export const Shop = (): JSX.Element => {
       ) : (
         <GoodsList goods={goods} addToCart={addToCart} />
       )}
-      <CartList order={order} handleCartShow={handleCartShow} />
+      {isCartShow ? (
+        <CartList
+          order={order}
+          handleCartShow={handleCartShow}
+          deleteItemFromCart={deleteItemFromCart}
+        />
+      ) : null}
     </main>
   );
 };
