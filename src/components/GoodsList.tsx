@@ -3,7 +3,7 @@ import { Item } from "./models/Item";
 
 export type GoodsListProps = {
   goods: Item[];
-  addToCart: (itemId: string) => void;
+  addToCart: (item: Item) => void;
 };
 export const GoodsList = (props: GoodsListProps) => {
   const { goods, addToCart } = props;

@@ -4,6 +4,7 @@ import { Preloader } from "./Preloader";
 import { GoodsList } from "./GoodsList";
 import { Cart } from "./Cart";
 import { Order } from "./models/Order";
+
 import { Item } from "./models/Item";
 import { CartList } from "./CartList";
 
@@ -11,7 +12,7 @@ export const Shop = (): JSX.Element => {
   const [goods, setGoods] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [order, setOrder] = useState<Order>({
-    itemIdToQuantity: new Map(),
+    itemToQuantity: new Map(),
   });
   const [isCartShow, setIsCartShow] = useState(false);
 
@@ -33,32 +34,34 @@ export const Shop = (): JSX.Element => {
       });
   }, []);
 
-  const addToCart = (itemId: string) => {
-    const itemQuantity = order.itemIdToQuantity.get(itemId);
-    if (itemQuantity === undefined) {
-      const newOrder: Order = {
-        itemIdToQuantity: order.itemIdToQuantity.set(itemId, 1),
+  const addToCart = (item: Item) => {
+    const isItemExist = order.itemToQuantity.has(item);
+    if (!isItemExist) {
+      const newOrder = {
+        itemToQuantity: order.itemToQuantity.set(item, 1),
       };
-
       setOrder(newOrder);
     } else {
-      const newOrder: Order = {
-        itemIdToQuantity: order.itemIdToQuantity.set(itemId, itemQuantity + 1),
+      const quantity = order.itemToQuantity.get(item);
+      if (typeof quantity === "undefined") {
+        throw new Error("Something wrong with getting number of items!");
+      }
+      const newOrder = {
+        itemToQuantity: order.itemToQuantity.set(item, quantity + 1),
       };
 
       setOrder(newOrder);
     }
   };
 
-  const deleteItemFromCart = (itemId: string) => {
+  const deleteItemFromCart = (item: Item) => {
     const newOrder: Order = {
-      itemIdToQuantity: order.itemIdToQuantity,
+      itemToQuantity: order.itemToQuantity,
     };
-    newOrder.itemIdToQuantity.delete(itemId);
+    newOrder.itemToQuantity.delete(item);
     setOrder(newOrder);
   };
 
-  console.log(order);
   return (
     <main className="container content">
       <Cart order={order} handleCartShow={handleCartShow} />

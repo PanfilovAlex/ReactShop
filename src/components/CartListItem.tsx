@@ -1,21 +1,28 @@
+import { Item } from "./models/Item";
+
 type CartItemProps = {
-  mainId: string;
+  item: Item;
   quantity: number;
-  deleteItemFromCart: (itemId: string) => void;
+  deleteItemFromCart: (item: Item) => void;
 };
 
 export const CartListItem = (props: CartItemProps) => {
+  const item = props.item;
   return (
     <li className="collection-item">
-      {props.mainId} * {props.quantity}{" "}
-      <span className="right">
-        <i
-          className="material-icons cart-delete"
-          onClick={() => props.deleteItemFromCart(props.mainId)}
-        >
-          close
-        </i>
-      </span>
+      <div>
+        {`${item.displayName} ${props.quantity} шт. * ${
+          item.price.finalPrice
+        } руб. = ${item.price.finalPrice * props.quantity} руб.`}
+        <span className="right">
+          <i
+            className="material-icons cart-delete"
+            onClick={() => props.deleteItemFromCart(item)}
+          >
+            close
+          </i>
+        </span>
+      </div>
     </li>
   );
 };

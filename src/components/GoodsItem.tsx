@@ -2,7 +2,7 @@ import { Item } from "./models/Item";
 
 type GoodsItemProps = {
   item: Item;
-  addToCart: (itemId: string) => void;
+  addToCart: (item: Item) => void;
 };
 
 export const GoodsItem = (props: GoodsItemProps) => {
@@ -21,7 +21,7 @@ export const GoodsItem = (props: GoodsItemProps) => {
         <p>{displayDescription}</p>
       </div>
       <div className="card-action">
-        <button className="btn" onClick={() => addToCart(mainId)}>
+        <button className="btn" onClick={() => addToCart(props.item)}>
           Купить
         </button>
         <span className="right" style={{ fontSize: "1.8rem" }}>
