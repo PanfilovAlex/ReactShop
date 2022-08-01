@@ -6,36 +6,42 @@ import { Order } from "./models/Order";
 type CartListProps = {
   order: Order;
   handleCartShow: () => void;
-  deleteItemFromCart: (item: Item) => void;
+  deleteItemFromCart: (itemId: string) => void;
+  incQuontity: (itemId: string) => void;
+  decQuontity: (itemId: string) => void;
 };
 
 export const CartList = (props: CartListProps) => {
-  const order = props.order;
+  const { order } = props;
   const handleCartShow = props.handleCartShow;
   const entries = order.itemToQuantity.entries();
   const newArray = Array.from(entries);
+  const incQuontity = props.incQuontity;
+  const decQuontity = props.decQuontity;
+
   const newFunc = () =>
     newArray.map(([key, value]) => {
       return (
         <CartListItem
-          key={key.mainId}
-          item={key}
-          quantity={value}
+          key={key}
+          itemId={key}
+          item={value.item}
+          quantity={value.number}
           deleteItemFromCart={props.deleteItemFromCart}
+          incQuontity={incQuontity}
+          decQuontity={decQuontity}
         />
       );
     });
 
   const totalBill = (order: Order): number => {
-    const entities = order.itemToQuantity.entries();
-    const sum = Array.from(entities);
+    const values = order.itemToQuantity.values();
+    const sum = Array.from(values);
     let result = 0;
     for (const ent of sum) {
-      const pr = ent[0].price.finalPrice;
-      const quant = ent[1];
-      result = result + pr * quant;
+      const pr = ent.item.price.finalPrice * ent.number;
+      result = result + pr;
     }
-
     return result;
   };
 
