@@ -12,7 +12,14 @@ export const Cart = (props: CartProps) => {
   return (
     <div className="cart blue darken-4 white-text" onClick={handleCartShow}>
       <i className="material-icons">shopping_cart</i>
-      {quantity ? <span className="cart-quantity">{quantity}</span> : null}
+      {quantity ? (
+        <span
+          className="cart-quantity"
+          style={{ color: "white", padding: "5px 5px" }}
+        >
+          {quantity}
+        </span>
+      ) : null}
     </div>
   );
 };
