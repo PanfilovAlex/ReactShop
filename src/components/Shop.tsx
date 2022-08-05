@@ -4,6 +4,7 @@ import { Preloader } from "./Preloader";
 import { GoodsList } from "./GoodsList";
 import { Cart } from "./Cart";
 import { Order } from "./models/Order";
+import { Alert } from "./Alert";
 import { Item } from "./models/Item";
 import { CartList } from "./CartList";
 
@@ -11,13 +12,10 @@ export const Shop = (): JSX.Element => {
   const [goods, setGoods] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [order, setOrder] = useState<Order>({
-    itemIdToQuantity: new Map(),
+    itemToQuantity: new Map(),
   });
   const [isCartShow, setIsCartShow] = useState(false);
-
-  const handleCartShow = () => {
-    setIsCartShow(!isCartShow);
-  };
+  const [alertName, setAlertName] = useState("");
 
   useEffect(function getGoods() {
     const requestHeaders = new Headers();
@@ -33,32 +31,83 @@ export const Shop = (): JSX.Element => {
       });
   }, []);
 
+  const handleCartShow = () => {
+    setIsCartShow(!isCartShow);
+  };
+
   const addToCart = (itemId: string) => {
-    const itemQuantity = order.itemIdToQuantity.get(itemId);
-    if (itemQuantity === undefined) {
-      const newOrder: Order = {
-        itemIdToQuantity: order.itemIdToQuantity.set(itemId, 1),
-      };
-
+    const isItemExist = order.itemToQuantity.has(itemId);
+    let newOrder;
+    if (!isItemExist) {
+      const itemFromGoods = goods.find((i) => i.mainId === itemId);
+      if (itemFromGoods === undefined) {
+        throw new Error("Item was not found");
+      } else {
+        newOrder = {
+          itemToQuantity: order.itemToQuantity.set(itemId, {
+            item: itemFromGoods,
+            number: 1,
+          }),
+        };
+      }
       setOrder(newOrder);
+      setAlertName(itemFromGoods.displayName);
     } else {
-      const newOrder: Order = {
-        itemIdToQuantity: order.itemIdToQuantity.set(itemId, itemQuantity + 1),
+      let itemFromOrder = order.itemToQuantity.get(itemId);
+      if (itemFromOrder === undefined) {
+        throw new Error("Something wrong with getting number of items!");
+      }
+      newOrder = {
+        itemToQuantity: order.itemToQuantity.set(itemId, {
+          item: itemFromOrder.item,
+          number: ++itemFromOrder.number,
+        }),
       };
-
       setOrder(newOrder);
+      setAlertName(itemFromOrder.item.displayName);
     }
   };
 
   const deleteItemFromCart = (itemId: string) => {
     const newOrder: Order = {
-      itemIdToQuantity: order.itemIdToQuantity,
+      itemToQuantity: order.itemToQuantity,
     };
-    newOrder.itemIdToQuantity.delete(itemId);
+    newOrder.itemToQuantity.delete(itemId);
     setOrder(newOrder);
   };
 
-  console.log(order);
+  const incQuontity = (itemId: string) => {
+    const quantity = order.itemToQuantity.get(itemId);
+    if (typeof quantity === "undefined") {
+      throw new Error("Something goes wrong");
+    }
+    const newOrder = {
+      itemToQuantity: order.itemToQuantity.set(itemId, {
+        item: quantity.item,
+        number: ++quantity.number,
+      }),
+    };
+    setOrder(newOrder);
+  };
+
+  const decQuontity = (itemId: string) => {
+    let element = order.itemToQuantity.get(itemId);
+    if (typeof element === "undefined") {
+      throw new Error("Item was not found");
+    }
+    element.number = element.number > 0 ? element.number - 1 : 0;
+    const newOrder = {
+      itemToQuantity: order.itemToQuantity.set(itemId, {
+        item: element.item,
+        number: element.number,
+      }),
+    };
+    setOrder(newOrder);
+  };
+
+  const handleCloseAlert = () => {
+    setAlertName("");
+  };
   return (
     <main className="container content">
       <Cart order={order} handleCartShow={handleCartShow} />
@@ -72,8 +121,11 @@ export const Shop = (): JSX.Element => {
           order={order}
           handleCartShow={handleCartShow}
           deleteItemFromCart={deleteItemFromCart}
+          incQuontity={incQuontity}
+          decQuontity={decQuontity}
         />
       ) : null}
+      {alertName && <Alert closeAlert={handleCloseAlert} name={alertName} />}
     </main>
   );
 };
